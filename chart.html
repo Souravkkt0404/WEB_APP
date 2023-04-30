@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Charts and Maps</title>
+	<!-- Load Chart.js library -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<!-- Load Google Maps API -->
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=67091c058f8865d2ed7411f06dd1a632"></script>
+	<style>
+		.chart-container {
+			width: 600px;
+			height: 400px;
+			margin: 0 auto;
+		}
+		.map-container {
+			width: 600px;
+			height: 400px;
+			margin: 0 auto;
+		}
+	</style>
+</head>
+<body>
+	<h1>Charts and Maps</h1>
+	<div class="chart-container">
+		<canvas id="myChart"></canvas>
+	</div>
+	<div class="map-container" id="map"></div>
+	<script>
+		// Get data from OpenWeatherMap API
+		fetch('https://api.openweathermap.org/data/2.5/weather?q=London&appid=67091c058f8865d2ed7411f06dd1a632')
+			.then(response => response.json())
+			.then(data => {
+				// Display temperature data in a pie chart
+				const ctx = document.getElementById('myChart').getContext('2d');
+				const myChart = new Chart(ctx, {
+					type: 'pie',
+					data: {
+						labels: ['Temperature', 'Feels like'],
+						datasets: [{
+							label: 'Temperature',
+							data: [data.main.temp, data.main.feels_like],
+							backgroundColor: [
+								'rgba(255, 99, 132, 0.2)',
+								'rgba(54, 162, 235, 0.2)'
+							],
+							borderColor: [
+								'rgba(255, 99, 132, 1)',
+								'rgba(54, 162, 235, 1)'
+							],
+							borderWidth: 1
+						}]
+					}
+				});
+				// Display location on Google Maps
+				const map = new google.maps.Map(document.getElementById('map'), {
+					center: {lat: data.coord.lat, lng: data.coord.lon},
+					zoom: 8
+				});
+				const marker = new google.maps.Marker({
+					position: {lat: data.coord.lat, lng: data.coord.lon},
+					map: map,
+					title: data.name
+				});
+			})
+			.catch(error => console.log(error));
+	</script>
+</body>
+</html>
